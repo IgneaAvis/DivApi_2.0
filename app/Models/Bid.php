@@ -38,7 +38,6 @@ class Bid extends Model
         'email',
         'status',
         'message',
-        'comment',
-        'updated_at'
+        'comment'
     ];
 }

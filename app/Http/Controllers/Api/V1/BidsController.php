@@ -7,6 +7,7 @@ use App\Http\Resources\BidsCollectionResource;
 use App\Repository\BidsRepository;
 use App\Services\BidsService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class BidsController extends BaseController
 {
@@ -27,13 +28,15 @@ class BidsController extends BaseController
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
      *          name="status",
-     *          description="Active or Resolved Default None",
-     *          in="query"
+     *          description="Active = 0, Resolved = 1",
+     *          in="query",
+     *          example="1"
      *     ),
      *     @OA\Parameter(
      *          name="order",
-     *          description="Asc or Desc Default Asc",
-     *          in="query"
+     *          description="Date in format like 2022-09-06",
+     *          in="query",
+     *          example="2022-09-06"
      *     ),
      *     @OA\Response(
      *          response=200,
@@ -55,8 +58,8 @@ class BidsController extends BaseController
     {
         return new BidsCollectionResource($this->bidsRepository->getBids(
             $request->get('status'),
-            $request->get('order'))
-        );
+            $request->get('date')
+        ));
     }
 
     /**
@@ -96,9 +99,9 @@ class BidsController extends BaseController
 
     public function createBid(Request $request)
     {
-        return $this->bidsService->createBid(
+        return response()->json($this->bidsService->createBid(
             $request->all()
-        );
+        ));
     }
 
     /**
@@ -132,10 +135,10 @@ class BidsController extends BaseController
 
     public function updateBid(Request $request, $id)
     {
-        return $this->bidsService->updateBid(
+        return response()->json($this->bidsService->updateBid(
             $request->all(),
             $id
-        );
+        ));
     }
 
 }

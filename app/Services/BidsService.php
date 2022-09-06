@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\UpdateMessage;
 use App\Models\Bid;
 use App\Services\Common\BidsServiceInterface;
+use App\Services\Common\ServiceResult;
 use Illuminate\Support\Facades\Validator;
 use Mail;
 
@@ -19,10 +20,10 @@ class BidsService implements BidsServiceInterface
             'message' => ['required', 'max:10000']
         ]);
         if ($validator->failed()) {
-            return response()->json($validator->messages(), 400);
+            return ServiceResult::createErrorResult('Validation Error', $validator->errors()->toArray());
         }
         $newBid = Bid::create($validator->validated());
-        return Bid::all()->last();
+        return ServiceResult::createSuccessResult($newBid);
     }
 
     public function updateBid(array $item, int $id)
@@ -32,24 +33,22 @@ class BidsService implements BidsServiceInterface
             'comment' => ['required', 'max:100']
         ]);
         if ($validator->failed()) {
-            return response()->json($validator->messages(), 400);
+            return ServiceResult::createErrorResult('Validation Error', $validator->errors()->toArray());
         }
         $comment = $validator->validated();
-        $date = date('Y-m-d h:i:s');
         $model->update([
             'comment' => $comment['comment'],
-            'updated_at' => $date,
-            'status' => 'Resolved'
+            'status' => 1
         ]);
         $this->send_mail($model);
-        return $model;
+        return ServiceResult::createSuccessResult($model);
     }
 
     public function send_mail($model){
-        $name = $model->getAttributeValue('name');
-        $comment = $model->getAttributeValue('comment');
-        $msg = $model->getAttributeValue('message');
+        $name = $model->get('name');
+        $comment = $model->get('comment');
+        $msg = $model->get('message');
         $items = [$name, $msg, $comment];
-        Mail::to($model->getAttributeValue('email'))->send(new UpdateMessage($items));
+        Mail::to($model->get('email'))->send(new UpdateMessage($items));
     }
 }

@@ -51,7 +51,7 @@ class AuthController extends BaseController
 
     public function register(Request $request)
     {
-        return $this->authService->register($request->all());
+        return response()->json($this->authService->register($request->all()));
     }
 
     /**
@@ -84,7 +84,7 @@ class AuthController extends BaseController
 
     public function login(Request $request)
     {
-        return $this->authService->login($request->all());
+        return response()->json($this->authService->login($request->all()));
     }
 
 }

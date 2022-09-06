@@ -84,12 +84,14 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Active or Resolved Default None"
+                        "description": "Active = 0, Resolved = 1",
+                        "example": "1"
                     },
                     {
                         "name": "order",
                         "in": "query",
-                        "description": "Asc or Desc Default Asc"
+                        "description": "Date in format like 2022-09-06",
+                        "example": "2022-09-06"
                     }
                 ],
                 "responses": {

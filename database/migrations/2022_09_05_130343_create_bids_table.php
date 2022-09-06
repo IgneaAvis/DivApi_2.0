@@ -17,11 +17,10 @@ class CreateBidsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->enum('status', ['Active', 'Resolved'])->default('Active');
+            $table->boolean('status')->default(false);
             $table->text('message');
             $table->text('comment')->nullable();
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 

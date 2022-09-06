@@ -4,8 +4,9 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Services\Common\AuthServiceInterface;
-//use Illuminate\Support\Facades\Auth;
-use Auth;
+use App\Services\Common\ServiceResult;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthService implements AuthServiceInterface
@@ -14,40 +15,35 @@ class AuthService implements AuthServiceInterface
 
     public function register(array $items)
     {
-        $attr = Validator::make($items, [
+        $validator = Validator::make($items, [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6'
         ]);
-        if ($attr->failed()) {
-            return response()->json($attr->messages(),400);
+        if ($validator->failed()) {
+            return ServiceResult::createErrorResult('Validation Error', $validator->errors()->toArray());
         }
-        $valid = $attr->validated();
+        $valid = $validator->validated();
         $user = User::create([
             'name' => $valid['name'],
-            'password' => bcrypt($valid['password']),
+            'password' => Hash::make($valid['password']),
             'email' => $valid['email']
         ]);
-        return response()->json([
-            'token' => $user->createToken('api_token')->plainTextToken
-        ], 201);
+        return ServiceResult::createSuccessResult($user->createToken('api_token')->plainTextToken);
     }
 
     public function login(array $items)
     {
-        $attr = Validator::make($items, [
+        $validator = Validator::make($items, [
             'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
-        if ($attr->failed()) {
-            return response()->json($attr->messages(), 400);
+        if ($validator->failed()) {
+            return ServiceResult::createErrorResult('Validation Error', $validator->errors()->toArray());
         }
-        if (!Auth::attempt($attr->validated())) {
-            return response()->json('Данные не совпадают', 401);
+        if (!Auth::attempt($validator->validated())) {
+            return ServiceResult::createErrorResult('Данные не совпадают');
         }
-
-        return response()->json([
-            'token' => auth()->user()->createToken('api_token')->plainTextToken
-        ], 201);
+        return ServiceResult::createSuccessResult(auth()->user()->createToken('api_token')->plainTextToken);
     }
 }

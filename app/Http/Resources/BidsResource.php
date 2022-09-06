@@ -17,7 +17,7 @@ class BidsResource extends JsonResource
         return [
             'name' => $this->name,
             'email' => $this->email,
-            'status' => $this->status,
+            'status' => $this->when($this->status == 1, 'Resolved', 'Active'),
             'message' => $this->message,
             'comment' => $this->comment
         ];

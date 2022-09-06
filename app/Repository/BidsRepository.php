@@ -7,20 +7,15 @@ use App\Repository\Common\BidRepositoryInterface;
 
 class BidsRepository implements BidRepositoryInterface
 {
-    public function getBids(string $status = null, string $order = null)
+    public function getBids(int $status = null, string $date = null)
     {
-        if (!is_null($status) && is_null($order)) {
-            return Bid::select()->where('status', '=', $status)->get();
+        $qb = Bid::select();
+        if (!is_null($status)) {
+            $qb->where('status', '=', $status);
         }
-        if (is_null($status) && !is_null($order)) {
-            return Bid::select()->orderBy('id', $order)->get();
+        if (!is_null($date)) {
+            $qb->whereDate('created_at', $date);
         }
-        if(!is_null($status) && !is_null($order)){
-            return Bid::select()->where('status', '=', $status)->orderBy('id', $order)->get();
-        }
-        if(is_null($status) && is_null($order)){
-            return Bid::all();
-        }
-        return response()->json(['error' => true, 'message' => 'error'], 400);
+        return $qb->get();
     }
 }
