@@ -21,5 +21,6 @@ class BidsRepository implements BidRepositoryInterface
         if(is_null($status) && is_null($order)){
             return Bid::all();
         }
+        return response()->json(['error' => true, 'message' => 'error'], 400);
     }
 }
