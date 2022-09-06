@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Mail\UpdateMessage;
 use App\Models\Bid;
 use App\Services\Common\BidsServiceInterface;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class BidsService implements BidsServiceInterface
@@ -40,6 +41,16 @@ class BidsService implements BidsServiceInterface
             'updated_at' => $date,
             'status' => 'Resolved'
         ]);
+        $this->send_mail($model);
         return $model;
+    }
+
+    public function send_mail($model){
+        $name = $model->getAttributeValue('name');
+        $comment = $model->getAttributeValue('comment');
+        $msg = $model->getAttributeValue('message');
+        $email = $model->getAttributeValue('email');
+        $items = [$name, $msg, $comment];
+        Mail::to($email)->send(new UpdateMessage($items));
     }
 }
