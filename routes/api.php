@@ -14,13 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::post('/requests', [\App\Http\Controllers\Api\V1\BidsController::class, 'createBid']);
+Route::post('/register', [\App\Http\Controllers\Api\V1\AuthController::class, 'register']);
+Route::post('/login', [\App\Http\Controllers\Api\V1\AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function (){
+    Route::get('/requests', [\App\Http\Controllers\Api\V1\BidsController::class, 'index']);
+    Route::put('/requests/{id}', [\App\Http\Controllers\Api\V1\BidsController::class, 'updateBid']);
 });
 
-Route::post('/register', [\App\Http\Controllers\Api\V1\AuthController::class, 'register']);
-Route::post('/login', [\App\Http\Controllers\Api\V1\AuthController::class, 'register']);
-
-Route::get('/requests', [\App\Http\Controllers\Api\V1\BidsController::class, 'index']);
-Route::post('/requests', [\App\Http\Controllers\Api\V1\BidsController::class, 'createBid']);
-Route::put('/requests/{id}', [\App\Http\Controllers\Api\V1\BidsController::class, 'updateBid']);
