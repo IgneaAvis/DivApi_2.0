@@ -19,6 +19,38 @@ class BidsController extends BaseController
         $this->bidsService = $bidsService;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/requests",
+     *     summary="Получение контента страницы",
+     *     tags={"Заявки"},
+     *     security={{"bearer_token":{}}},
+     *     @OA\Parameter(
+     *          name="status",
+     *          description="Active or Resolved Default None",
+     *          in="query"
+     *     ),
+     *     @OA\Parameter(
+     *          name="order",
+     *          description="Asc or Desc Default Asc",
+     *          in="query"
+     *     ),
+     *     @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="wrong data"
+     *     )
+     * )
+     *
+     */
+
     public function index(Request $request)
     {
         return new BidsCollectionResource($this->bidsRepository->getBids(
@@ -27,12 +59,76 @@ class BidsController extends BaseController
         );
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/requests",
+     *     summary="Создание заявки",
+     *     tags={"Заявки"},
+     *     security={{"bearer_token":{}}},
+     *     @OA\Parameter(
+     *          in="query",
+     *          name="name",
+     *          description="Имя пользователя",
+     *          example="User"
+     *     ),
+     *     @OA\Parameter(
+     *          in="query",
+     *          name="email",
+     *          description="Email пользователя",
+     *          example="test@email.com"
+     *     ),
+     *     @OA\Parameter(
+     *          in="query",
+     *          name="message",
+     *          description="Сообщение пользователя",
+     *          example="Test message"
+     *     ),
+     *     @OA\Response(
+     *          response=201,
+     *          description="successful operation"
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid data"
+     *     )
+     * )
+     */
+
     public function createBid(Request $request)
     {
         return $this->bidsService->createBid(
             $request->all()
         );
     }
+
+    /**
+     * @OA\Put(
+     *     path="/api/v1/requests/{id}",
+     *     summary="Добавление ответа к заявке",
+     *     tags={"Заявки"},
+     *     security={{"bearer_token":{}}},
+     *     @OA\Parameter(
+     *          in="path",
+     *          name="id",
+     *          description="Id заявки",
+     *          example=1
+     *     ),
+     *     @OA\Parameter(
+     *          in="query",
+     *          name="comment",
+     *          description="Комментарий к заявке",
+     *          example="Test Comment"
+     *     ),
+     *     @OA\Response(
+     *          response=201,
+     *          description="successful operation"
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid data"
+     *     )
+     * )
+     */
 
     public function updateBid(Request $request, $id)
     {

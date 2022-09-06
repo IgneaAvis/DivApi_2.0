@@ -15,33 +15,39 @@ class AuthService implements AuthServiceInterface
     public function register(array $items)
     {
         $attr = Validator::make($items, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email',
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6'
-        ])->validated();
+        ]);
+        if ($attr->failed()) {
+            return response()->json($attr->messages(),400);
+        }
+        $valid = $attr->validated();
         $user = User::create([
-            'name' => $attr['name'],
-            'password' => bcrypt($attr['password']),
-            'email' => $attr['email']
+            'name' => $valid['name'],
+            'password' => bcrypt($valid['password']),
+            'email' => $valid['email']
         ]);
         return response()->json([
-            'token' => $user->createToken('tokens')->plainTextToken
-        ]);
+            'token' => $user->createToken('api_token')->plainTextToken
+        ], 201);
     }
 
     public function login(array $items)
     {
         $attr = Validator::make($items, [
-            'email' => 'required|string|email|',
-            'password' => 'required|string|min:6'
-        ])->validated();
-
-        if (!Auth::attempt($attr)) {
+            'email' => 'required|email',
+            'password' => 'required|min:6'
+        ]);
+        if ($attr->failed()) {
+            return response()->json($attr->messages(), 400);
+        }
+        if (!Auth::attempt($attr->validated())) {
             return response()->json('Данные не совпадают', 401);
         }
 
         return response()->json([
-            'token' => auth()->user()->createToken('API Token')->plainTextToken
-        ]);
+            'token' => auth()->user()->createToken('api_token')->plainTextToken
+        ], 201);
     }
 }

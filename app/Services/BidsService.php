@@ -18,7 +18,7 @@ class BidsService implements BidsServiceInterface
             'message' => ['required', 'max:10000']
         ]);
         if ($validator->failed()) {
-            return response()->json($validator->messages());
+            return response()->json($validator->messages(), 400);
         }
         $newBid = Bid::create($validator->validated());
         return Bid::all()->last();
@@ -31,7 +31,7 @@ class BidsService implements BidsServiceInterface
             'comment' => ['required', 'max:100']
         ]);
         if ($validator->failed()) {
-            return response()->json($validator->messages());
+            return response()->json($validator->messages(), 400);
         }
         $comment = $validator->validated();
         $date = date('Y-m-d h:i:s');

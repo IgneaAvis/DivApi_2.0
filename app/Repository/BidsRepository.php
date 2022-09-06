@@ -16,7 +16,7 @@ class BidsRepository implements BidRepositoryInterface
             return Bid::select()->orderBy('id', $order)->get();
         }
         if(!is_null($status) && !is_null($order)){
-            return Bid::select()->where('status', '=', $status)->orderBy('id', $order);
+            return Bid::select()->where('status', '=', $status)->orderBy('id', $order)->get();
         }
         if(is_null($status) && is_null($order)){
             return Bid::all();
