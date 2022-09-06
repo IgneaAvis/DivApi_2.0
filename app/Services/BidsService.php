@@ -28,7 +28,7 @@ class BidsService implements BidsServiceInterface
 
     public function updateBid(array $item, int $id)
     {
-        $model = Bid::find($id);
+        $model = Bid::findOrFail($id);
         $validator = Validator::make($item, [
             'comment' => ['required', 'max:100']
         ]);
